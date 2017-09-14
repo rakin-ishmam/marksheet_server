@@ -18,8 +18,22 @@ func TestValid(t *testing.T) {
 			res:  false,
 		},
 		{
+			name: "max len",
+			val: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" +
+				"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+			res: false,
+		},
+		{
 			name: "invalid char",
 			val:  "_testtest",
+			res:  false,
+		},
+		{
+			name: "global user",
+			val:  "global",
 			res:  false,
 		},
 		{
