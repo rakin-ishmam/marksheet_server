@@ -44,3 +44,22 @@ func Remove(where, what string, value interface{}) Operation {
 		value,
 	}
 }
+
+type parse struct {
+	where string
+	what  string
+	value interface{}
+}
+
+func (p parse) Op() string {
+	return fmt.Sprintf("parse:%v:%v:%v", p.where, p.what, p.value)
+}
+
+// Parse returns parse operation
+func Parse(where, what string, value interface{}) Operation {
+	return &parse{
+		where: where,
+		what:  what,
+		value: value,
+	}
+}
