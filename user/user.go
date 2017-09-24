@@ -65,3 +65,8 @@ func okChar(c int32) bool {
 func GlobalUser() Name {
 	return "global"
 }
+
+// TestUser returns user name for test purpose
+func TestUser() Name {
+	return "globaltest"
+}

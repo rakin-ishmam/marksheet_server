@@ -40,6 +40,11 @@ func TestValid(t *testing.T) {
 			res:  false,
 		},
 		{
+			name: "test user",
+			val:  user.TestUser(),
+			res:  true,
+		},
+		{
 			name: "valid",
 			val:  "usertest",
 			res:  true,
