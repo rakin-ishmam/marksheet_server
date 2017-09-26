@@ -55,7 +55,15 @@ func TestTest(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			test := NewTest(v.name, v.expValue, v.resValue)
+			test := NewTest(
+				v.name,
+				func() interface{} {
+					return v.expValue
+				},
+				func() interface{} {
+					return v.resValue
+				},
+			)
 			res := test.Test()
 
 			resv := fmt.Sprintf("%v", res)
