@@ -7,6 +7,13 @@ import (
 // ValueFunc use for to get value
 type ValueFunc func() interface{}
 
+// ConvVF takes a value and returns ValueFunc
+func ConvVF(v interface{}) ValueFunc {
+	return func() interface{} {
+		return v
+	}
+}
+
 // Test comapares the test result
 type Test struct {
 	name     string

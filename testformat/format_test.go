@@ -57,12 +57,8 @@ func TestTest(t *testing.T) {
 		t.Run(v.name, func(t *testing.T) {
 			test := NewTest(
 				v.name,
-				func() interface{} {
-					return v.expValue
-				},
-				func() interface{} {
-					return v.resValue
-				},
+				ConvVF(v.expValue),
+				ConvVF(v.resValue),
 			)
 			res := test.Test()
 
