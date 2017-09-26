@@ -31,7 +31,7 @@ func TestValid(t *testing.T) {
 func TestRightString(t *testing.T) {
 	tt := []struct {
 		name string
-		val  *access.Rights
+		val  access.Righter
 		res  string
 	}{
 		{"empty test", access.NewRights(), ""},
@@ -62,18 +62,19 @@ func TestRightString(t *testing.T) {
 }
 
 func TestOp(t *testing.T) {
-	var rts *access.Rights
+	var rts access.Righter
 	opSeq := []struct {
 		name string
 		op   func()
 		val  string
-	}{{
-		name: "init",
-		op: func() {
-			rts = access.NewRights()
+	}{
+		{
+			name: "init",
+			op: func() {
+				rts = access.NewRights()
+			},
+			val: "",
 		},
-		val: "",
-	},
 		{
 			name: "add read",
 			op: func() {
