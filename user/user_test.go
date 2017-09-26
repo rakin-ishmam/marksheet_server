@@ -1,6 +1,7 @@
 package user_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/rakin-ishmam/marksheet_server/errs"
@@ -54,7 +55,11 @@ func TestValid(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			test := testformat.NewTest(v.name, v.val.Valid(), v.res)
+			test := testformat.NewTest(
+				v.name,
+				testformat.ConvVF(v.val.Valid()),
+				testformat.ConvVF(v.res),
+			)
 			if err := test.Test(); err != nil {
 				t.Fatalf(err.Error())
 			}
@@ -87,12 +92,20 @@ func TestNewName(t *testing.T) {
 	for _, v := range st {
 		t.Run(v.name, func(t *testing.T) {
 			nm, err := user.NewName(v.value)
-			testStr := testformat.NewTest(v.name, v.okRes, nm.String())
+			testStr := testformat.NewTest(
+				fmt.Sprintf("err->%v", v.name),
+				testformat.ConvVF(v.okRes),
+				testformat.ConvVF(nm.String()),
+			)
 			if err := testStr.Test(); err != nil {
 				t.Fatal(err.Error())
 			}
 
-			testErr := testformat.NewTest(v.name, v.errRes, err)
+			testErr := testformat.NewTest(
+				fmt.Sprintf("value->%v", v.name),
+				testformat.ConvVF(v.errRes),
+				testformat.ConvVF(err),
+			)
 			if err := testErr.Test(); err != nil {
 				t.Fatal(err.Error())
 			}
