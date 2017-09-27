@@ -148,10 +148,10 @@ func TestUserRightHas(t *testing.T) {
 }
 
 func TestUserRightRemove(t *testing.T) {
-	rts := access.NewRights(access.Read, access.Write, access.Edit, access.Delete)
+	rts := access.SuperRights()
 	r := access.NewUserRight(
 		user.TestUser(),
-		access.NewRights(access.Read, access.Write, access.Edit, access.Delete),
+		access.SuperRights(),
 	)
 
 	tt := []struct {

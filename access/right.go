@@ -106,3 +106,8 @@ func ParseRights(str string) (Righter, error) {
 
 	return &rts, nil
 }
+
+// SuperRights returns Righter with all Rights
+func SuperRights() Righter {
+	return NewRights(Read, Write, Edit, Delete)
+}
