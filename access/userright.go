@@ -42,20 +42,33 @@ func NewUserRight(name user.Name, rts Righter) Righter {
 
 // ParseUserRight convert string to Righter of a user
 func ParseUserRight(str string) (Righter, error) {
-	divInd := strings.IndexAny(str, "*")
-	if divInd < 0 {
-		return nil, errs.InvalidErr(op.Parse("access", "userright", str))
-	}
-
-	user, err := user.NewName(str[:divInd])
+	user, err := parseUserName(str)
 	if err != nil {
 		return nil, err
 	}
 
-	rights, err := ParseRights(str[divInd+1:])
+	rights, err := parseUserRights(str)
 	if err != nil {
 		return nil, err
 	}
 
 	return NewUserRight(user, rights), nil
+}
+
+func parseUserName(str string) (user.Name, error) {
+	strs := strings.SplitN(str, "*", 2)
+	if len(strs) < 2 {
+		return "", errs.InvalidErr(op.Parse("access", "userright", str))
+	}
+
+	return user.NewName(strs[0])
+}
+
+func parseUserRights(str string) (Righter, error) {
+	strs := strings.SplitN(str, "*", 2)
+	if len(strs) < 2 {
+		return nil, errs.InvalidErr(op.Parse("access", "userright", str))
+	}
+
+	return ParseRights(strs[1])
 }
