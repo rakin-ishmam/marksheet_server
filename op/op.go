@@ -71,7 +71,7 @@ type validation struct {
 }
 
 func (v validation) Op() string {
-	return fmt.Sprintf("parse:%v:%v:%v", v.where, v.what, v.value)
+	return fmt.Sprintf("validation:%v:%v:%v", v.where, v.what, v.value)
 }
 
 // Validation returns validation operation

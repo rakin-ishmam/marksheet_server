@@ -94,7 +94,7 @@ func TestValidation(t *testing.T) {
 		{
 			"valiation",
 			op.Validation("access", "right", "r"),
-			"parse:access:right:r",
+			"validation:access:right:r",
 		},
 	}
 
