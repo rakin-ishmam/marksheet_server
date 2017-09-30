@@ -84,3 +84,26 @@ func TestParse(t *testing.T) {
 		})
 	}
 }
+
+func TestValidation(t *testing.T) {
+	at := []struct {
+		name  string
+		value op.Operation
+		exp   string
+	}{
+		{
+			"valiation",
+			op.Validation("access", "right", "r"),
+			"parse:access:right:r",
+		},
+	}
+
+	for _, tt := range at {
+		t.Run(tt.name, func(t *testing.T) {
+			res := tt.value.Op()
+			if res != tt.exp {
+				t.Fatalf("%v expected %v but got %v", tt.name, tt.exp, res)
+			}
+		})
+	}
+}

@@ -63,3 +63,22 @@ func Parse(where, what string, value interface{}) Operation {
 		value: value,
 	}
 }
+
+type validation struct {
+	where string
+	what  string
+	value interface{}
+}
+
+func (v validation) Op() string {
+	return fmt.Sprintf("parse:%v:%v:%v", v.where, v.what, v.value)
+}
+
+// Validation returns validation operation
+func Validation(where, what string, value interface{}) Operation {
+	return &validation{
+		where: where,
+		what:  what,
+		value: value,
+	}
+}
