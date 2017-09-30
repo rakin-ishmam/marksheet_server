@@ -40,20 +40,20 @@ func TestNewAccessor(t *testing.T) {
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
 			accessor, err := access.NewAccessor(v.owner, v.users)
-			test := testformat.NewTest(
+			test := testformat.NewWithValue(
 				fmt.Sprintf("err %v", v.name),
-				testformat.ConvVF(v.expErr),
-				testformat.ConvVF(err),
+				v.expErr,
+				err,
 			)
 			if terr := test.Test(); terr != nil {
 				t.Fatal(terr.Error())
 				return
 			}
 
-			test = testformat.NewTest(
+			test = testformat.NewWithValue(
 				fmt.Sprintf("value %v", v.name),
-				testformat.ConvVF(v.users),
-				testformat.ConvVF(accessor.String()),
+				v.users,
+				accessor.String(),
 			)
 
 			if terr := test.Test(); terr != nil {

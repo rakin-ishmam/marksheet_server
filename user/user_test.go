@@ -55,10 +55,10 @@ func TestValid(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			test := testformat.NewTest(
+			test := testformat.NewWithValue(
 				v.name,
-				testformat.ConvVF(v.val.Valid()),
-				testformat.ConvVF(v.res),
+				v.val.Valid(),
+				v.res,
 			)
 			if err := test.Test(); err != nil {
 				t.Fatalf(err.Error())
@@ -92,19 +92,19 @@ func TestNewName(t *testing.T) {
 	for _, v := range st {
 		t.Run(v.name, func(t *testing.T) {
 			nm, err := user.NewName(v.value)
-			testStr := testformat.NewTest(
+			testStr := testformat.NewWithValue(
 				fmt.Sprintf("err->%v", v.name),
-				testformat.ConvVF(v.okRes),
-				testformat.ConvVF(nm.String()),
+				v.okRes,
+				nm.String(),
 			)
 			if err := testStr.Test(); err != nil {
 				t.Fatal(err.Error())
 			}
 
-			testErr := testformat.NewTest(
+			testErr := testformat.NewWithValue(
 				fmt.Sprintf("value->%v", v.name),
-				testformat.ConvVF(v.errRes),
-				testformat.ConvVF(err),
+				v.errRes,
+				err,
 			)
 			if err := testErr.Test(); err != nil {
 				t.Fatal(err.Error())

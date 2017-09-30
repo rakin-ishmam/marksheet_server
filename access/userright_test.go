@@ -63,16 +63,16 @@ func TestParseUserRight(t *testing.T) {
 		t.Run(v.name, func(t *testing.T) {
 			res, err := access.ParseUserRight(v.value)
 
-			testErr := testformat.NewTest(
+			testErr := testformat.NewWithValue(
 				fmt.Sprintf("err->%v", v.name),
-				testformat.ConvVF(v.resErr),
-				testformat.ConvVF(err),
+				v.resErr,
+				err,
 			)
 			if err = testErr.Test(); err != nil {
 				t.Fatalf(err.Error())
 			}
 
-			testV := testformat.NewTest(
+			testV := testformat.New(
 				fmt.Sprintf("value->%v", v.name),
 				convRighterVF(v.resRighter),
 				convRighterVF(res),
@@ -106,7 +106,7 @@ func TestUserRightAdd(t *testing.T) {
 	rts.Add(access.Write)
 
 	exp := fmt.Sprintf("%v*%v", user.TestUser(), rts)
-	test := testformat.NewTest("Add", testformat.ConvVF(exp), testformat.ConvVF(r))
+	test := testformat.NewWithValue("Add", exp, r)
 
 	if err := test.Test(); err != nil {
 		t.Fatal(err.Error())
@@ -133,10 +133,10 @@ func TestUserRightHas(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			test := testformat.NewTest(
+			test := testformat.NewWithValue(
 				v.name,
-				testformat.ConvVF(v.exp),
-				testformat.ConvVF(v.res),
+				v.exp,
+				v.res,
 			)
 
 			if err := test.Test(); err != nil {
@@ -179,10 +179,10 @@ func TestUserRightRemove(t *testing.T) {
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
 			v.op()
-			test := testformat.NewTest(
+			test := testformat.NewWithValue(
 				v.name,
-				testformat.ConvVF(fmt.Sprintf("%v*%v", user.TestUser(), rts)),
-				testformat.ConvVF(r),
+				fmt.Sprintf("%v*%v", user.TestUser(), rts),
+				r,
 			)
 
 			if err := test.Test(); err != nil {
