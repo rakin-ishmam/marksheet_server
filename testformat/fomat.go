@@ -38,7 +38,16 @@ func (t Test) Test() error {
 	return nil
 }
 
-// NewTest returns Test instance
-func NewTest(name string, expected, result ValueFunc) Test {
+// New returns Test instance
+func New(name string, expected, result ValueFunc) Test {
 	return Test{name, expected, result}
+}
+
+// NewWithValue returns Test instance
+func NewWithValue(name string, expected, result interface{}) Test {
+	return Test{
+		name:     name,
+		expected: ConvVF(expected),
+		result:   ConvVF(result),
+	}
 }

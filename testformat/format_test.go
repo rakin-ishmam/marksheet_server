@@ -55,10 +55,29 @@ func TestTest(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			test := NewTest(
+			test := New(
 				v.name,
 				ConvVF(v.expValue),
 				ConvVF(v.resValue),
+			)
+			res := test.Test()
+
+			resv := fmt.Sprintf("%v", res)
+			expv := fmt.Sprintf("%v", v.value)
+
+			if resv != expv {
+				t.Fatalf("name->%v, expected->%v, but result->%v", v.name, expv, resv)
+			}
+
+		})
+	}
+
+	for _, v := range tt {
+		t.Run(v.name, func(t *testing.T) {
+			test := NewWithValue(
+				v.name,
+				v.expValue,
+				v.resValue,
 			)
 			res := test.Test()
 
