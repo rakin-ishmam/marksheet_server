@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/rakin-ishmam/marksheet_server/errs"
-	"github.com/rakin-ishmam/marksheet_server/op"
 	"github.com/rakin-ishmam/marksheet_server/testformat"
 
 	"github.com/rakin-ishmam/marksheet_server/user"
@@ -85,7 +83,7 @@ func TestNewName(t *testing.T) {
 			"invalid",
 			"tes$tname",
 			"",
-			errs.InvalidErr(op.Parse("user", "name", "tes$tname")),
+			user.ErrInvalidUsr("tes$tname"),
 		},
 	}
 

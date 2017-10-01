@@ -1,10 +1,5 @@
 package user
 
-import (
-	"github.com/rakin-ishmam/marksheet_server/errs"
-	"github.com/rakin-ishmam/marksheet_server/op"
-)
-
 // Name represents system's user nam
 type Name string
 
@@ -21,7 +16,7 @@ func (n Name) String() string {
 func NewName(str string) (Name, error) {
 	nm := Name(str)
 	if !nm.Valid() {
-		return Name(""), errs.InvalidErr(op.Parse("user", "name", str))
+		return Name(""), ErrInvalidUsr(str)
 	}
 
 	return nm, nil
