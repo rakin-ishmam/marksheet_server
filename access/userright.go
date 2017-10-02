@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/rakin-ishmam/marksheet_server/errs"
-	"github.com/rakin-ishmam/marksheet_server/op"
 	"github.com/rakin-ishmam/marksheet_server/user"
 )
 
@@ -58,7 +56,7 @@ func ParseUserRight(str string) (Righter, error) {
 func parseUserName(str string) (user.Name, error) {
 	strs := strings.SplitN(str, "*", 2)
 	if len(strs) < 2 {
-		return "", errs.InvalidErr(op.Parse("access", "userright", str))
+		return "", errParseUsrRight(str)
 	}
 
 	return user.NewName(strs[0])
@@ -67,7 +65,7 @@ func parseUserName(str string) (user.Name, error) {
 func parseUserRights(str string) (Righter, error) {
 	strs := strings.SplitN(str, "*", 2)
 	if len(strs) < 2 {
-		return nil, errs.InvalidErr(op.Parse("access", "userright", str))
+		return nil, errParseUsrRight(str)
 	}
 
 	return ParseRights(strs[1])

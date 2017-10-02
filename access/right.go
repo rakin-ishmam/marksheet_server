@@ -1,10 +1,5 @@
 package access
 
-import (
-	"github.com/rakin-ishmam/marksheet_server/errs"
-	"github.com/rakin-ishmam/marksheet_server/op"
-)
-
 // Right represents permission of the path or file
 type Right byte
 
@@ -32,6 +27,10 @@ func (r Right) Valid() bool {
 	return false
 }
 
+func (r Right) String() string {
+	return string([]byte{byte(r)})
+}
+
 // Rights is list of Right
 type Rights []Right
 
@@ -48,8 +47,12 @@ func (r Rights) Has(rt Right) bool {
 
 // Add new Right to Rights
 func (r *Rights) Add(rt Right) error {
+	if !rt.Valid() {
+		return errInvalidRight(rt)
+	}
+
 	if r.Has(rt) {
-		return errs.ExistErr(op.Add("access", "right", rt))
+		return nil
 	}
 
 	*r = append(*r, rt)
@@ -95,10 +98,6 @@ func ParseRights(str string) (Righter, error) {
 	rts := Rights{}
 	for _, v := range str {
 		rt := Right(v)
-		if !rt.Valid() {
-			return nil, errs.InvalidErr(op.Parse("access", "right", str))
-		}
-
 		if err := rts.Add(rt); err != nil {
 			return nil, err
 		}

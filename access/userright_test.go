@@ -1,4 +1,4 @@
-package access_test
+package access
 
 import (
 	"fmt"
@@ -6,17 +6,13 @@ import (
 
 	"github.com/rakin-ishmam/marksheet_server/testformat"
 
-	"github.com/rakin-ishmam/marksheet_server/access"
-	"github.com/rakin-ishmam/marksheet_server/errs"
-	"github.com/rakin-ishmam/marksheet_server/op"
-
 	"github.com/rakin-ishmam/marksheet_server/user"
 )
 
 func TestNewUserRight(t *testing.T) {
 	uName, _ := user.NewName("test")
-	rts := access.NewRights(access.Read, access.Write)
-	ur := access.NewUserRight(uName, rts)
+	rts := NewRights(Read, Write)
+	ur := NewUserRight(uName, rts)
 
 	exp := fmt.Sprintf("%v*%v", uName.String(), rts.String())
 	res := ur.String()
@@ -28,44 +24,50 @@ func TestNewUserRight(t *testing.T) {
 
 func TestParseUserRight(t *testing.T) {
 	tt := []struct {
-		name       string
-		value      string
-		resRighter access.Righter
-		resErr     error
+		name  string
+		value string
+		exp   func() (Righter, error)
 	}{
 		{
 			"valid",
-			fmt.Sprintf("%v*%v", user.TestUser().String(), access.NewRights(access.Read, access.Write)),
-			access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
-			nil,
+			fmt.Sprintf("%v*%v", user.TestUser().String(), NewRights(Read, Write)),
+			func() (Righter, error) {
+				return NewUserRight(user.TestUser(), NewRights(Read, Write)), nil
+			},
 		},
 		{
 			"without devider",
-			fmt.Sprintf("%v%v", user.TestUser().String(), access.NewRights(access.Read, access.Write)),
-			nil,
-			errs.InvalidErr(op.Parse("access", "userright", fmt.Sprintf("%v%v", user.TestUser().String(), access.NewRights(access.Read, access.Write)))),
+			fmt.Sprintf("%v%v", user.TestUser().String(), NewRights(Read, Write)),
+			func() (Righter, error) {
+				return nil, errParseUsrRight(fmt.Sprintf("%v%v", user.TestUser().String(), NewRights(Read, Write)))
+			},
 		},
 		{
 			"invalid user name",
-			fmt.Sprintf("%v*%v", "a", access.NewRights(access.Read, access.Write)),
-			nil,
-			errs.InvalidErr(op.Parse("user", "name", "a")),
+			fmt.Sprintf("%v*%v", "a", NewRights(Read, Write)),
+			func() (Righter, error) {
+				_, err := user.NewName("a")
+				return nil, err
+			},
 		},
 		{
 			"invalid rights",
 			fmt.Sprintf("%v*%v", user.TestUser().String(), "avb"),
-			nil,
-			errs.InvalidErr(op.Parse("access", "right", "avb")),
+			func() (Righter, error) {
+				return nil, errInvalidRight(Right('a'))
+			},
 		},
 	}
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			res, err := access.ParseUserRight(v.value)
+			res, err := ParseUserRight(v.value)
+
+			expRes, expErr := v.exp()
 
 			testErr := testformat.NewWithValue(
 				fmt.Sprintf("err->%v", v.name),
-				v.resErr,
+				expErr,
 				err,
 			)
 			if err = testErr.Test(); err != nil {
@@ -74,7 +76,7 @@ func TestParseUserRight(t *testing.T) {
 
 			testV := testformat.New(
 				fmt.Sprintf("value->%v", v.name),
-				convRighterVF(v.resRighter),
+				convRighterVF(expRes),
 				convRighterVF(res),
 			)
 
@@ -85,7 +87,7 @@ func TestParseUserRight(t *testing.T) {
 	}
 }
 
-func convRighterVF(v access.Righter) testformat.ValueFunc {
+func convRighterVF(v Righter) testformat.ValueFunc {
 	return func() interface{} {
 		if v == nil {
 			return nil
@@ -96,14 +98,14 @@ func convRighterVF(v access.Righter) testformat.ValueFunc {
 }
 
 func TestUserRightAdd(t *testing.T) {
-	rts := access.NewRights(access.Read)
-	r := access.NewUserRight(
+	rts := NewRights(Read)
+	r := NewUserRight(
 		user.TestUser(),
-		access.NewRights(access.Read),
+		NewRights(Read),
 	)
 
-	r.Add(access.Write)
-	rts.Add(access.Write)
+	r.Add(Write)
+	rts.Add(Write)
 
 	exp := fmt.Sprintf("%v*%v", user.TestUser(), rts)
 	test := testformat.NewWithValue("Add", exp, r)
@@ -115,9 +117,9 @@ func TestUserRightAdd(t *testing.T) {
 }
 
 func TestUserRightHas(t *testing.T) {
-	r := access.NewUserRight(
+	r := NewUserRight(
 		user.TestUser(),
-		access.NewRights(access.Read, access.Write),
+		NewRights(Read, Write),
 	)
 
 	tt := []struct {
@@ -125,10 +127,10 @@ func TestUserRightHas(t *testing.T) {
 		exp  bool
 		res  bool
 	}{
-		{"read", true, r.Has(access.Read)},
-		{"write", true, r.Has(access.Write)},
-		{"delete", false, r.Has(access.Delete)},
-		{"edit", false, r.Has(access.Edit)},
+		{"read", true, r.Has(Read)},
+		{"write", true, r.Has(Write)},
+		{"delete", false, r.Has(Delete)},
+		{"edit", false, r.Has(Edit)},
 	}
 
 	for _, v := range tt {
@@ -148,10 +150,10 @@ func TestUserRightHas(t *testing.T) {
 }
 
 func TestUserRightRemove(t *testing.T) {
-	rts := access.SuperRights()
-	r := access.NewUserRight(
+	rts := SuperRights()
+	r := NewUserRight(
 		user.TestUser(),
-		access.SuperRights(),
+		SuperRights(),
 	)
 
 	tt := []struct {
@@ -159,20 +161,20 @@ func TestUserRightRemove(t *testing.T) {
 		op   func()
 	}{
 		{"read", func() {
-			r.Remove(access.Read)
-			rts.Remove(access.Read)
+			r.Remove(Read)
+			rts.Remove(Read)
 		}},
 		{"write", func() {
-			r.Remove(access.Write)
-			rts.Remove(access.Write)
+			r.Remove(Write)
+			rts.Remove(Write)
 		}},
 		{"delete", func() {
-			r.Remove(access.Delete)
-			rts.Remove(access.Delete)
+			r.Remove(Delete)
+			rts.Remove(Delete)
 		}},
 		{"edit", func() {
-			r.Remove(access.Edit)
-			rts.Remove(access.Edit)
+			r.Remove(Edit)
+			rts.Remove(Edit)
 		}},
 	}
 
