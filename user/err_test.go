@@ -1,10 +1,9 @@
-package user_test
+package user
 
 import (
 	"testing"
 
 	"github.com/rakin-ishmam/marksheet_server/testformat"
-	"github.com/rakin-ishmam/marksheet_server/user"
 
 	"github.com/rakin-ishmam/marksheet_server/errs"
 	"github.com/rakin-ishmam/marksheet_server/op"
@@ -22,7 +21,7 @@ func TestErrInvalidUsr(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			test := testformat.NewWithValue(v.name, v.exp, user.ErrInvalidUsr(v.value))
+			test := testformat.NewWithValue(v.name, v.exp, errInvalidUsr(v.value))
 			if err := test.Test(); err != nil {
 				t.Fatal(err)
 			}

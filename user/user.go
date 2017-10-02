@@ -16,7 +16,7 @@ func (n Name) String() string {
 func NewName(str string) (Name, error) {
 	nm := Name(str)
 	if !nm.Valid() {
-		return Name(""), ErrInvalidUsr(str)
+		return Name(""), errInvalidUsr(str)
 	}
 
 	return nm, nil

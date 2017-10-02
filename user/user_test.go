@@ -1,18 +1,16 @@
-package user_test
+package user
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/rakin-ishmam/marksheet_server/testformat"
-
-	"github.com/rakin-ishmam/marksheet_server/user"
 )
 
 func TestValid(t *testing.T) {
 	tt := []struct {
 		name string
-		val  user.Name
+		val  Name
 		res  bool
 	}{
 		{
@@ -41,7 +39,7 @@ func TestValid(t *testing.T) {
 		},
 		{
 			name: "test user",
-			val:  user.TestUser(),
+			val:  TestUser(),
 			res:  true,
 		},
 		{
@@ -83,13 +81,13 @@ func TestNewName(t *testing.T) {
 			"invalid",
 			"tes$tname",
 			"",
-			user.ErrInvalidUsr("tes$tname"),
+			errInvalidUsr("tes$tname"),
 		},
 	}
 
 	for _, v := range st {
 		t.Run(v.name, func(t *testing.T) {
-			nm, err := user.NewName(v.value)
+			nm, err := NewName(v.value)
 			testStr := testformat.NewWithValue(
 				fmt.Sprintf("err->%v", v.name),
 				v.okRes,
