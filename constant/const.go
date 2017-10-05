@@ -1,13 +1,13 @@
 package constant
 
-// OpDivider divides operation key words
-const OpDivider string = ":"
+// OpSpliter divides operation key words
+const OpSpliter string = ":"
 
-// ErrDivider devides error key words
-const ErrDivider string = "#"
+// ErrSpliter devides error key words
+const ErrSpliter string = "#"
 
-// UserRightDivider divides right between users
-const UserRightDivider string = "&"
+// UserRightSplit divides right between users
+const UserRightSplit string = "&"
 
-// RightDivider divides user and rights
-const RightDivider string = "*"
+// RightSpliter divides user and rights
+const RightSpliter string = "*"
