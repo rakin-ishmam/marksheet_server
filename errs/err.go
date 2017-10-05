@@ -1,7 +1,10 @@
 package errs
 
-import "github.com/rakin-ishmam/marksheet_server/op"
-import "fmt"
+import (
+	"github.com/rakin-ishmam/marksheet_server/constant"
+	"github.com/rakin-ishmam/marksheet_server/op"
+	"github.com/rakin-ishmam/marksheet_server/services/str"
+)
 
 // Err represents system error structure
 type Err struct {
@@ -10,7 +13,7 @@ type Err struct {
 }
 
 func (e Err) Error() string {
-	return fmt.Sprintf("%v#%v", e.kind.String(), e.op.Op())
+	return str.ConcatBySpliter(constant.ErrSpliter, e.kind.String(), e.op.Op())
 }
 
 // Op gives Operation value

@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/rakin-ishmam/marksheet_server/constant"
+	"github.com/rakin-ishmam/marksheet_server/testformat"
+
 	"github.com/rakin-ishmam/marksheet_server/errs"
 	"github.com/rakin-ishmam/marksheet_server/op"
 )
@@ -23,10 +26,11 @@ func TestErr(t *testing.T) {
 
 	for _, v := range ts {
 		t.Run(v.name, func(t *testing.T) {
-			expected := fmt.Sprintf("%v#%v", v.kind.String(), v.op.Op())
+			expected := fmt.Sprintf("%v%v%v", v.kind.String(), constant.ErrSpliter, v.op.Op())
 			res := genErr(v.op, v.kind).Error()
-			if res != expected {
-				t.Fatalf("%v test expected (%v) but got (%v)", v.name, expected, res)
+			test := testformat.NewWithValue(v.name, expected, res)
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
 		})
 	}
