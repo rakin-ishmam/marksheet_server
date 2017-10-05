@@ -3,14 +3,16 @@ package op_test
 import (
 	"testing"
 
+	"github.com/rakin-ishmam/marksheet_server/testformat"
+
 	"github.com/rakin-ishmam/marksheet_server/op"
 )
 
 func TestRemove(t *testing.T) {
-	at := []struct {
+	tt := []struct {
 		name  string
 		value op.Operation
-		res   string
+		exp   string
 	}{
 		{
 			"string",
@@ -24,21 +26,22 @@ func TestRemove(t *testing.T) {
 		},
 	}
 
-	for _, tt := range at {
-		t.Run(tt.name, func(t *testing.T) {
-			res := tt.value.Op()
-			if res != tt.res {
-				t.Fatalf("%v expected %v but got %v", tt.name, tt.res, res)
+	for _, v := range tt {
+		t.Run(v.name, func(t *testing.T) {
+			test := testformat.NewWithValue(v.name, v.exp, v.value.Op())
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
+
 		})
 	}
 }
 
 func TestAdd(t *testing.T) {
-	at := []struct {
+	tt := []struct {
 		name  string
 		value op.Operation
-		res   string
+		exp   string
 	}{
 		{
 			"string",
@@ -52,21 +55,22 @@ func TestAdd(t *testing.T) {
 		},
 	}
 
-	for _, tt := range at {
-		t.Run(tt.name, func(t *testing.T) {
-			res := tt.value.Op()
-			if res != tt.res {
-				t.Fatalf("%v expected %v but got %v", tt.name, tt.res, res)
+	for _, v := range tt {
+		t.Run(v.name, func(t *testing.T) {
+			test := testformat.NewWithValue(v.name, v.exp, v.value.Op())
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
+
 		})
 	}
 }
 
 func TestParse(t *testing.T) {
-	at := []struct {
+	tt := []struct {
 		name  string
 		value op.Operation
-		res   string
+		exp   string
 	}{
 		{
 			"right",
@@ -75,18 +79,19 @@ func TestParse(t *testing.T) {
 		},
 	}
 
-	for _, tt := range at {
-		t.Run(tt.name, func(t *testing.T) {
-			res := tt.value.Op()
-			if res != tt.res {
-				t.Fatalf("%v expected %v but got %v", tt.name, tt.res, res)
+	for _, v := range tt {
+		t.Run(v.name, func(t *testing.T) {
+			test := testformat.NewWithValue(v.name, v.exp, v.value.Op())
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
+
 		})
 	}
 }
 
 func TestValidation(t *testing.T) {
-	at := []struct {
+	tt := []struct {
 		name  string
 		value op.Operation
 		exp   string
@@ -98,12 +103,13 @@ func TestValidation(t *testing.T) {
 		},
 	}
 
-	for _, tt := range at {
-		t.Run(tt.name, func(t *testing.T) {
-			res := tt.value.Op()
-			if res != tt.exp {
-				t.Fatalf("%v expected %v but got %v", tt.name, tt.exp, res)
+	for _, v := range tt {
+		t.Run(v.name, func(t *testing.T) {
+			test := testformat.NewWithValue(v.name, v.exp, v.value.Op())
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
+
 		})
 	}
 }

@@ -1,6 +1,11 @@
 package op
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/rakin-ishmam/marksheet_server/constant"
+	"github.com/rakin-ishmam/marksheet_server/services/str"
+)
 
 // Operation represents operation of the system in specific format
 type Operation interface {
@@ -14,7 +19,14 @@ type add struct {
 }
 
 func (a add) Op() string {
-	return fmt.Sprintf("add:%v:%v:%v", a.where, a.what, a.value)
+	return str.ConcatBySpliter(
+		constant.OpSpliter,
+		"add",
+		a.where,
+		a.what,
+		fmt.Sprintf("%v", a.value),
+	)
+
 }
 
 // Add returns add Operation
@@ -33,7 +45,13 @@ type remove struct {
 }
 
 func (r remove) Op() string {
-	return fmt.Sprintf("remove:%v:%v:%v", r.where, r.what, r.value)
+	return str.ConcatBySpliter(
+		constant.OpSpliter,
+		"remove",
+		r.where,
+		r.what,
+		fmt.Sprintf("%v", r.value),
+	)
 }
 
 // Remove returns remove operation
@@ -52,7 +70,13 @@ type parse struct {
 }
 
 func (p parse) Op() string {
-	return fmt.Sprintf("parse:%v:%v:%v", p.where, p.what, p.value)
+	return str.ConcatBySpliter(
+		constant.OpSpliter,
+		"parse",
+		p.where,
+		p.what,
+		fmt.Sprintf("%v", p.value),
+	)
 }
 
 // Parse returns parse operation
@@ -71,7 +95,13 @@ type validation struct {
 }
 
 func (v validation) Op() string {
-	return fmt.Sprintf("validation:%v:%v:%v", v.where, v.what, v.value)
+	return str.ConcatBySpliter(
+		constant.OpSpliter,
+		"validation",
+		v.where,
+		v.what,
+		fmt.Sprintf("%v", v.value),
+	)
 }
 
 // Validation returns validation operation
