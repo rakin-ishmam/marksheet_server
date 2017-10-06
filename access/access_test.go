@@ -125,3 +125,54 @@ func TestAccessHas(t *testing.T) {
 		})
 	}
 }
+
+func TestAccessAdd(t *testing.T) {
+	acc, err := access.NewAccessor(
+		user.GlobalUser(),
+		fmt.Sprintf(
+			"%v",
+			access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
+		),
+	)
+
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+
+	tt := []struct {
+		name string
+		op   func()
+		res  testformat.ValueFunc
+		exp  testformat.ValueFunc
+	}{
+		{
+			"test1",
+			func() {
+				rt := acc.Add(user.TestUser() + "t")
+				rt.Add(access.Read)
+				rt.Add(access.Write)
+			},
+			func() interface{} {
+				return acc
+			},
+			func() interface{} {
+				return fmt.Sprintf(
+					"%v %v",
+					access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
+					access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write)),
+				)
+			},
+		},
+	}
+
+	for _, v := range tt {
+		t.Run(v.name, func(t *testing.T) {
+			v.op()
+			test := testformat.New(v.name, v.exp, v.res)
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
