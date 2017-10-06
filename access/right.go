@@ -11,8 +11,8 @@ const (
 	Delete       = 'd'
 )
 
-// Valid validates the right
-func (r Right) Valid() bool {
+// IsRight validates the right
+func (r Right) IsRight() bool {
 	switch r {
 	case Read:
 		return true
@@ -47,7 +47,7 @@ func (r Rights) Has(rt Right) bool {
 
 // Add new Right to Rights
 func (r *Rights) Add(rt Right) error {
-	if !rt.Valid() {
+	if !rt.IsRight() {
 		return errInvalidRight(rt)
 	}
 

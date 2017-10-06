@@ -3,6 +3,8 @@ package access_test
 import (
 	"testing"
 
+	"github.com/rakin-ishmam/marksheet_server/testformat"
+
 	"github.com/rakin-ishmam/marksheet_server/access"
 )
 
@@ -10,7 +12,7 @@ func TestValid(t *testing.T) {
 	tt := []struct {
 		name string
 		val  access.Right
-		res  bool
+		exp  bool
 	}{
 		{"read right", access.Read, true},
 		{"write right", access.Write, true},
@@ -21,8 +23,13 @@ func TestValid(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			if res := v.val.Valid(); res != v.res {
-				t.Fatalf("%v expected %v but got %v", v.name, v.res, res)
+			test := testformat.NewWithValue(
+				v.name,
+				v.exp,
+				v.val.IsRight(),
+			)
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
 		})
 	}
@@ -32,7 +39,7 @@ func TestRightString(t *testing.T) {
 	tt := []struct {
 		name string
 		val  access.Righter
-		res  string
+		exp  string
 	}{
 		{"empty test", access.NewRights(), ""},
 		{"all value test",
@@ -54,8 +61,9 @@ func TestRightString(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			if res := v.val.String(); res != v.res {
-				t.Fatalf("%v expected %v but got %v", v.name, v.res, res)
+			test := testformat.NewWithValue(v.name, v.exp, v.val.String())
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
 		})
 	}
@@ -66,71 +74,72 @@ func TestOp(t *testing.T) {
 	opSeq := []struct {
 		name string
 		op   func()
-		val  string
+		exp  string
 	}{
 		{
 			name: "init",
 			op: func() {
 				rts = access.NewRights()
 			},
-			val: "",
+			exp: "",
 		},
 		{
 			name: "add read",
 			op: func() {
 				rts.Add(access.Read)
 			},
-			val: "r",
+			exp: "r",
 		},
 		{
 			name: "add write",
 			op: func() {
 				rts.Add(access.Write)
 			},
-			val: "rw",
+			exp: "rw",
 		},
 		{
 			name: "add edit",
 			op: func() {
 				rts.Add(access.Edit)
 			},
-			val: "rwe",
+			exp: "rwe",
 		},
 		{
 			name: "add delete",
 			op: func() {
 				rts.Add(access.Delete)
 			},
-			val: "rwed",
+			exp: "rwed",
 		},
 		{
 			name: "remove write",
 			op: func() {
 				rts.Remove(access.Write)
 			},
-			val: "red",
+			exp: "red",
 		},
 		{
 			name: "add write",
 			op: func() {
 				rts.Add(access.Write)
 			},
-			val: "redw",
+			exp: "redw",
 		},
 		{
 			name: "again add write",
 			op: func() {
 				rts.Add(access.Write)
 			},
-			val: "redw",
+			exp: "redw",
 		},
 	}
 
 	for _, v := range opSeq {
 		t.Run(v.name, func(t *testing.T) {
 			v.op()
-			if v.val != rts.String() {
-				t.Fatalf("%v expected %v but got %v", v.name, v.val, rts.String())
+			test := testformat.NewWithValue(v.name, v.exp, rts.String())
+			if err := test.Test(); err != nil {
+				t.Fatal(err)
 			}
 		})
 	}
