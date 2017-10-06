@@ -164,6 +164,23 @@ func TestAccessAdd(t *testing.T) {
 				)
 			},
 		},
+		{
+			"test2",
+			func() {
+				rt := acc.Add(user.TestUser() + "t")
+				rt.Add(access.Delete)
+			},
+			func() interface{} {
+				return acc
+			},
+			func() interface{} {
+				return fmt.Sprintf(
+					"%v %v",
+					access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
+					access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write, access.Delete)),
+				)
+			},
+		},
 	}
 
 	for _, v := range tt {
