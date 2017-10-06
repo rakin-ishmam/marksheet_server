@@ -63,3 +63,65 @@ func TestNewAccessor(t *testing.T) {
 		})
 	}
 }
+
+func TestAccessHas(t *testing.T) {
+	acc, err := access.NewAccessor(
+		user.GlobalUser(),
+		fmt.Sprintf(
+			"%v %v",
+			access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
+			access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write)),
+		),
+	)
+
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+
+	tt := []struct {
+		name string
+		res  testformat.ValueFunc
+		exp  testformat.ValueFunc
+	}{
+		{
+			"test1",
+			func() interface{} {
+				rt := acc.Has(user.TestUser())
+				return rt
+			},
+			func() interface{} {
+				return access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write))
+			},
+		},
+		{
+			"test2 nil",
+			func() interface{} {
+				rt := acc.Has(user.TestUser() + "m")
+				return rt
+			},
+			func() interface{} {
+				return nil
+			},
+		},
+		{
+			"test3 owner",
+			func() interface{} {
+				rt := acc.Has(user.GlobalUser())
+				return rt
+			},
+			func() interface{} {
+				return access.NewUserRight(user.GlobalUser(), access.SuperRights())
+			},
+		},
+	}
+
+	for _, v := range tt {
+		t.Run(v.name, func(t *testing.T) {
+			test := testformat.New(v.name, v.exp, v.res)
+			if err = test.Test(); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}

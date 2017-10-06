@@ -1,8 +1,10 @@
 package access
 
 import (
-	"fmt"
 	"strings"
+
+	"github.com/rakin-ishmam/marksheet_server/constant"
+	"github.com/rakin-ishmam/marksheet_server/services/str"
 
 	"github.com/rakin-ishmam/marksheet_server/user"
 )
@@ -30,7 +32,8 @@ func (u *UserRight) Remove(rt Right) {
 
 // String convert user Rights to string
 func (u *UserRight) String() string {
-	return fmt.Sprintf("%v*%v", u.User.String(), u.Rights.String())
+	return str.ConcatBySpliter(constant.UserRightSpliter, u.User.String(), u.Rights.String())
+
 }
 
 // NewUserRight return Righter of a User
@@ -54,7 +57,7 @@ func ParseUserRight(str string) (Righter, error) {
 }
 
 func parseUserName(str string) (user.Name, error) {
-	strs := strings.SplitN(str, "*", 2)
+	strs := strings.SplitN(str, constant.UserRightSpliter, 2)
 	if len(strs) < 2 {
 		return "", errParseUsrRight(str)
 	}
@@ -63,7 +66,7 @@ func parseUserName(str string) (user.Name, error) {
 }
 
 func parseUserRights(str string) (Righter, error) {
-	strs := strings.SplitN(str, "*", 2)
+	strs := strings.SplitN(str, constant.UserRightSpliter, 2)
 	if len(strs) < 2 {
 		return nil, errParseUsrRight(str)
 	}
