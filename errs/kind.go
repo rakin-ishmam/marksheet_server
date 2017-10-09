@@ -9,6 +9,7 @@ const (
 	Exist
 	NotExist
 	Unauthorised
+	Limit
 )
 
 // String converts Kind to string
@@ -22,6 +23,8 @@ func (k Kind) String() string {
 		return "not exit"
 	case Unauthorised:
 		return "unauthorised"
+	case Limit:
+		return "limit"
 	}
 
 	return "unknown"

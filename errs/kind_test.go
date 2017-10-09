@@ -16,7 +16,8 @@ func TestKind(t *testing.T) {
 		{"exist", errs.Exist, "exist"},
 		{"not exit", errs.NotExist, "not exit"},
 		{"unauthorised", errs.Unauthorised, "unauthorised"},
-		{"unknown", 10, "unknown"},
+		{"limit", errs.Limit, "limit"},
+		{"unknown", 100, "unknown"},
 	}
 
 	for _, v := range ts {

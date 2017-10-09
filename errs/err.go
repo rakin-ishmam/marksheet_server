@@ -44,3 +44,8 @@ func NotExistErr(op op.Operation) *Err {
 func UnauthorisedErr(op op.Operation) *Err {
 	return genErr(op, Unauthorised)
 }
+
+// LimitErr returns error for exit the limit
+func LimitErr(op op.Operation) *Err {
+	return genErr(op, Limit)
+}

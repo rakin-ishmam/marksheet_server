@@ -22,6 +22,7 @@ func TestErr(t *testing.T) {
 		{"exist", errs.Exist, op.Add("user", "name", "test name")},
 		{"not exist", errs.NotExist, op.Add("user", "name", "test name")},
 		{"unauthorised", errs.Unauthorised, op.Add("user", "name", "test name")},
+		{"limit", errs.Limit, op.Add("user", "name", "test name")},
 	}
 
 	for _, v := range ts {
@@ -46,6 +47,8 @@ func genErr(op op.Operation, kind errs.Kind) error {
 		return errs.NotExistErr(op)
 	case errs.Unauthorised:
 		return errs.UnauthorisedErr(op)
+	case errs.Limit:
+		return errs.LimitErr(op)
 	}
 
 	return errors.New("unknown")
