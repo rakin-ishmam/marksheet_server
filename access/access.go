@@ -11,12 +11,17 @@ import (
 type Accessor interface {
 	Has(user.Name) Righter
 	Add(user.Name) Righter
+	Remove(user.Name)
 	String() string
 }
 
 type access struct {
 	usrRts map[string]Righter
 	owner  user.Name
+}
+
+func (a *access) Remove(name user.Name) {
+	delete(a.usrRts, name.String())
 }
 
 // Has takes User name and returns Righter of that user
