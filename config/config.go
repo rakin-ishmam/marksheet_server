@@ -1,7 +1,10 @@
 package config
 
-// LimitUserName represents the limit of the user name
-const LimitUserName = 255
+// MaxtUserName represents the maximum length of the user name
+const MaxtUserName = 255
 
-// LimitShareUser represents miximum share limit
-const LimitShareUser = 100
+// MinUserName represents the minimum length of the user name
+const MinUserName = 5
+
+// MaxShareUser represents miximum share limit
+const MaxShareUser = 100
