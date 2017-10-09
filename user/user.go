@@ -1,5 +1,9 @@
 package user
 
+import (
+	"github.com/rakin-ishmam/marksheet_server/config"
+)
+
 // Name represents system's user nam
 type Name string
 
@@ -27,7 +31,7 @@ func ok(name string) bool {
 }
 
 func okLen(str string) bool {
-	if l := len(str); l < 5 || l > 255 {
+	if l := len(str); l < config.MinUserName || l > config.MaxtUserName {
 		return false
 	}
 
