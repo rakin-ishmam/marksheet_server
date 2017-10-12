@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/rakin-ishmam/marksheet_server/config"
+
 	"github.com/rakin-ishmam/marksheet_server/user"
 )
 
 // Accessor wraps methods of access
 type Accessor interface {
 	Has(user.Name) Righter
-	Add(user.Name) Righter
+	Add(user.Name) (Righter, error)
 	Remove(user.Name)
 	String() string
 }
@@ -40,15 +42,23 @@ func (a access) Has(name user.Name) Righter {
 }
 
 // Add user to access
-func (a *access) Add(name user.Name) Righter {
+func (a *access) Add(name user.Name) (Righter, error) {
+	if !name.Valid() {
+		return nil, errAddInvUser(name)
+	}
+
 	if r := a.Has(name); r != nil {
-		return r
+		return r, nil
+	}
+
+	if len(a.usrRts) == config.MaxShareUser {
+		return nil, errMaxAddUser(name)
 	}
 
 	r := NewUserRight(name, NewRights())
 	a.usrRts[name.String()] = r
 
-	return r
+	return r, nil
 }
 
 // String convert users access to string

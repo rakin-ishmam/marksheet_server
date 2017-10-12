@@ -1,12 +1,10 @@
-package access_test
+package access
 
 import (
 	"fmt"
 	"testing"
 
 	"github.com/rakin-ishmam/marksheet_server/testformat"
-
-	"github.com/rakin-ishmam/marksheet_server/access"
 	"github.com/rakin-ishmam/marksheet_server/user"
 )
 
@@ -21,7 +19,7 @@ func TestNewAccessor(t *testing.T) {
 		{
 			"valid1",
 			user.GlobalUser(),
-			fmt.Sprintf("%v", access.NewUserRight(user.TestUser(), access.SuperRights())),
+			fmt.Sprintf("%v", NewUserRight(user.TestUser(), SuperRights())),
 			nil,
 		},
 
@@ -30,8 +28,8 @@ func TestNewAccessor(t *testing.T) {
 			user.GlobalUser(),
 			fmt.Sprintf(
 				"%v u%v",
-				access.NewUserRight(user.TestUser(), access.SuperRights()),
-				access.NewUserRight(user.TestUser(), access.SuperRights()),
+				NewUserRight(user.TestUser(), SuperRights()),
+				NewUserRight(user.TestUser(), SuperRights()),
 			),
 			nil,
 		},
@@ -39,7 +37,7 @@ func TestNewAccessor(t *testing.T) {
 
 	for _, v := range tt {
 		t.Run(v.name, func(t *testing.T) {
-			accessor, err := access.NewAccessor(v.owner, v.users)
+			accessor, err := NewAccessor(v.owner, v.users)
 			test := testformat.NewWithValue(
 				fmt.Sprintf("err %v", v.name),
 				v.expErr,
@@ -65,12 +63,12 @@ func TestNewAccessor(t *testing.T) {
 }
 
 func TestAccessHas(t *testing.T) {
-	acc, err := access.NewAccessor(
+	acc, err := NewAccessor(
 		user.GlobalUser(),
 		fmt.Sprintf(
 			"%v %v",
-			access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
-			access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write)),
+			NewUserRight(user.TestUser(), NewRights(Read, Write)),
+			NewUserRight(user.TestUser()+"t", NewRights(Read, Write)),
 		),
 	)
 
@@ -91,7 +89,7 @@ func TestAccessHas(t *testing.T) {
 				return rt
 			},
 			func() interface{} {
-				return access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write))
+				return NewUserRight(user.TestUser(), NewRights(Read, Write))
 			},
 		},
 		{
@@ -111,7 +109,7 @@ func TestAccessHas(t *testing.T) {
 				return rt
 			},
 			func() interface{} {
-				return access.NewUserRight(user.GlobalUser(), access.SuperRights())
+				return NewUserRight(user.GlobalUser(), SuperRights())
 			},
 		},
 	}
@@ -127,11 +125,11 @@ func TestAccessHas(t *testing.T) {
 }
 
 func TestAccessAdd(t *testing.T) {
-	acc, err := access.NewAccessor(
+	acc, err := NewAccessor(
 		user.GlobalUser(),
 		fmt.Sprintf(
 			"%v",
-			access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
+			NewUserRight(user.TestUser(), NewRights(Read, Write)),
 		),
 	)
 
@@ -141,66 +139,51 @@ func TestAccessAdd(t *testing.T) {
 	}
 
 	tt := []struct {
-		name string
-		op   func()
-		res  testformat.ValueFunc
-		exp  testformat.ValueFunc
+		name   string
+		user   user.Name
+		expRes Righter
+		expErr error
 	}{
 		{
-			"test1",
-			func() {
-				rt := acc.Add(user.TestUser() + "t")
-				rt.Add(access.Read)
-				rt.Add(access.Write)
-			},
-			func() interface{} {
-				return acc
-			},
-			func() interface{} {
-				return fmt.Sprintf(
-					"%v %v",
-					access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
-					access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write)),
-				)
-			},
+			"invalid",
+			user.Name("t"),
+			nil,
+			errAddInvUser(user.Name("t")),
 		},
 		{
-			"test2",
-			func() {
-				rt := acc.Add(user.TestUser() + "t")
-				rt.Add(access.Delete)
-			},
-			func() interface{} {
-				return acc
-			},
-			func() interface{} {
-				return fmt.Sprintf(
-					"%v %v",
-					access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
-					access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write, access.Delete)),
-				)
-			},
+			"already exist",
+			user.TestUser(),
+			NewUserRight(user.TestUser(), NewRights(Read, Write)),
+			nil,
+		},
+		{
+			"new user",
+			user.TestUser() + "v",
+			NewUserRight(user.TestUser()+"v", NewRights()),
+			nil,
 		},
 	}
 
 	for _, v := range tt {
-		t.Run(v.name, func(t *testing.T) {
-			v.op()
-			test := testformat.New(v.name, v.exp, v.res)
-			if err := test.Test(); err != nil {
-				t.Fatal(err)
-			}
-		})
+		res, err := acc.Add(v.user)
+
+		test := testformat.NewEmpty()
+		test.Add("value test-"+v.name, v.expRes, res)
+		test.Add("err test-"+v.name, v.expErr, err)
+
+		if err = test.Test(); err != nil {
+			t.Fatal(err)
+		}
 	}
 }
 
 func TestAccessRemove(t *testing.T) {
-	acc, err := access.NewAccessor(
+	acc, err := NewAccessor(
 		user.GlobalUser(),
 		fmt.Sprintf(
 			"%v %v",
-			access.NewUserRight(user.TestUser(), access.NewRights(access.Read, access.Write)),
-			access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write)),
+			NewUserRight(user.TestUser(), NewRights(Read, Write)),
+			NewUserRight(user.TestUser()+"t", NewRights(Read, Write)),
 		),
 	)
 
@@ -226,7 +209,7 @@ func TestAccessRemove(t *testing.T) {
 			func() interface{} {
 				return fmt.Sprintf(
 					"%v",
-					access.NewUserRight(user.TestUser()+"t", access.NewRights(access.Read, access.Write)),
+					NewUserRight(user.TestUser()+"t", NewRights(Read, Write)),
 				)
 			},
 		},
